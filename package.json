@@ -3,7 +3,7 @@
     "@types/nodemailer": "^6.4.6",
     "canvas": "^2.9.3",
     "copyfiles": "^2.4.1",
-    "discord.js": "^13.8.1",
+    "discord.js": "^13.17.1",
     "dotenv": "^16.0.1",
     "handlebars": "^4.7.7",
     "mongoose": "^6.7.2",
@@ -17,8 +17,6 @@
   "scripts": {
     "start": "node dist/Bot.js",
     "dev": "tsc",
-    "postinstall": "npm run build",
-    "prestart": "npm run build",
     "build": "tsc",
     "postbuild": "copyfiles -u 1 src/assets/**/*.* dist/"
   },
@@ -29,6 +27,8 @@
     "@types/jsdom": "^20.0.1",
     "@types/jsrsasign": "^10.5.4",
     "@types/node": "^18.0.4",
-    "@types/node-rsa": "^1.1.1"
+    "@types/node-rsa": "^1.1.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
   }
 }

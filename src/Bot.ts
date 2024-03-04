@@ -1,6 +1,3 @@
-
-
-
 import { Client, Intents } from "discord.js"
 // dotenv
 import dotenv from 'dotenv';
@@ -17,8 +14,9 @@ import messageListener from "./listeners/messageListener";
 import messageReaction from "./listeners/messageReaction";
 import OpenWeatherMap from "openweathermap-ts";
 import fs from 'fs';
+import path from "path";
 
-dotenv.config({ path: ".env" });
+dotenv.config({ path: path.join(__dirname, "../config.env") });
 // Load Config...
 
 export const config = loadConfig();
@@ -34,7 +32,7 @@ export const openWeather = new OpenWeatherMap({
     units: 'metric'
 });
 
-openWeather.getByGeoCoordinates({ latitude: 48.442078, longitude: 8.6848512, queryType:"weather"}).catch((_) => {
+openWeather.getByGeoCoordinates({ latitude: 48.442078, longitude: 8.6848512, queryType: "weather" }).catch((_) => {
     console.warn("Weather API-Key not set or invalid. Everything weather related will not work.")
 });
 
@@ -72,7 +70,7 @@ function loadConfig(): Config | undefined {
             verification_channel: process.env.DISCORD_VERIFY_CHANNEL || "",
             roles_channel: process.env.DISCORD_ROLES_CHANNEL || ""
         },
-        email:{
+        email: {
             user: process.env.EMAIL_USER || "",
             password: process.env.EMAIL_PASSWORD || "",
             host: process.env.EMAIL_HOST || "",
@@ -102,9 +100,9 @@ async function initListeners(client: Client): Promise<void> {
     ready(client);
     interactionCreate(client);
     messageListener(client);
-    try{
+    try {
         messageReaction(client);
-    }catch(e){
+    } catch (e) {
         console.error("Error with Reactions!:", e);
     }
 }

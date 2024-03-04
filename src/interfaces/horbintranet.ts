@@ -32,7 +32,7 @@ class IntranetFacade implements HorbIntranetFacade {
             // First request to get the session-id
             const response = await fetch(url, options).catch(err => console.error('error:' + err));
             if (!response) throw new Error("Intranet response is null, maybe down?");
-            
+
             // Check if the session is still valid, currently by checking if the string Benutzeranmeldung is in the response
             const text = await response.text();
             if (text.includes("Benutzeranmeldung")) {
@@ -64,14 +64,14 @@ class IntranetFacade implements HorbIntranetFacade {
             },
             body: encodedParams.toString()
         };
-        
-        
+
+
         // Get the reponse for the typouserresponse.
         let loginresponse = await fetch(url, options);
         // console.log(await loginresponse.text());
         const cookies = loginresponse.headers.get('set-cookie')?.split(';');
 
-        if(cookies){
+        if (cookies) {
             this.typouser = cookies[0].split('=')[1] || "";
         }
         return this.typouser !== "";
@@ -93,6 +93,7 @@ class IntranetFacade implements HorbIntranetFacade {
         date.setTime(date.getTime() + (week * 7 * 24 * 60 * 60 * 1000));
 
         let url = `https://www.hb.dhbw-stuttgart.de/intranet/digitaler-stundenplan?kurs=${kurs}&goto=Kurs+anzeigen&day=${date.getDate()}&month=${date.getMonth() + 1}&year=${date.getFullYear()}`;
+        console.log(url)
         let options: any = {
             method: 'GET',
             headers: {
@@ -138,10 +139,10 @@ class IntranetFacade implements HorbIntranetFacade {
         for (let appointment of appointments) {
             let time = appointment.querySelector(".time")?.text;
             let backgroundCol = appointment.attributes.style.split(":")[1];
-            let type : Schedule["type"] = 'lecture';
-            if (backgroundCol == "#f79f81"){
+            let type: Schedule["type"] = 'lecture';
+            if (backgroundCol == "#f79f81") {
                 type = 'exam';
-            }   
+            }
             let from = time?.split("-")[0].trim();
 
             let to = time?.split("-")[1].trim();
@@ -163,12 +164,12 @@ class IntranetFacade implements HorbIntranetFacade {
                     break;
                 }
                 let className = temp?.attributes.class;
-                switch(className){
+                switch (className) {
                     case "week_smallseparatorcell":
                     case "week_smallseparatorcell_black":
-                        if(visitedBigSeparator){
+                        if (visitedBigSeparator) {
                             i += 0.5;
-                        }else if(lastSmallSeparator){
+                        } else if (lastSmallSeparator) {
                             col++;
                         }
                         lastSmallSeparator = true;
@@ -178,11 +179,11 @@ class IntranetFacade implements HorbIntranetFacade {
                         visitedBigSeparator = true;
                         lastSmallSeparator = false;
 
-                        i+=0.5;
+                        i += 0.5;
                         break;
                     case "week_block":
                         lastSmallSeparator = false;
-                        if(!visitedBigSeparator){
+                        if (!visitedBigSeparator) {
                             col++;
                         }
                         break;
@@ -191,7 +192,7 @@ class IntranetFacade implements HorbIntranetFacade {
 
 
                 temp = temp.previousElementSibling;
-            } 
+            }
 
             let appointmentDay = table.querySelectorAll(".week_header")[i]?.text
             if (!appointmentDay) throw new Error("Could not find firstWeekDayText");
@@ -230,7 +231,7 @@ class IntranetFacade implements HorbIntranetFacade {
         return { meta: { kw, year: date.getFullYear(), spans }, schedule: data };
     }
 
-    async getCompleteSchedData(kurs: string){
+    async getCompleteSchedData(kurs: string) {
 
         // Calculate how many weeks in the past January first 2021 was
         const janFirst = new Date(2021, 0, 1);
@@ -238,7 +239,7 @@ class IntranetFacade implements HorbIntranetFacade {
         const week = 1000 * 60 * 60 * 24 * 7;
         const weeksSinceJanFirst = Math.floor((today.getTime() - janFirst.getTime()) / week);
         let allAppointments: Schedule[] = [];
-        for(let weekOffset = weeksSinceJanFirst; weekOffset >= 0; weekOffset--){
+        for (let weekOffset = weeksSinceJanFirst; weekOffset >= 0; weekOffset--) {
             let data = await this.getStundenplan(kurs, -weekOffset);
             let sched = Object.values(data.schedule).flat();
             allAppointments = allAppointments.concat(sched);
@@ -248,8 +249,8 @@ class IntranetFacade implements HorbIntranetFacade {
 
     }
 
-    
-    
+
+
 }
 
 let intranet: IntranetFacade;
