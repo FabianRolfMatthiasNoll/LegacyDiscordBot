@@ -15,4 +15,6 @@ COPY ./ ./
 RUN npm run build
 
 COPY ./src/assets ./dist/assets
-RUN npm start
+
+# Use CMD to start your application
+CMD ["npm", "start"]
